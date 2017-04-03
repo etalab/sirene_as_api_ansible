@@ -1,0 +1,43 @@
+---
+- name: Install vim
+  apt: name=vim state=present
+
+- name: Set .vim directory owner for {{ username }}
+  file:
+    path:     '~/.vim'
+    group:    '{{ username }}'
+    owner:    '{{ username }}'
+    state:    directory
+    mode:     '0755'
+
+- name: Set .vim directory files owner for {{ username }}
+  file:
+    path:     '~/.vim'
+    group:    '{{ username }}'
+    owner:    '{{ username }}'
+    state:    directory
+    recurse:  true
+
+- name: Copy vimrc file for {{ username }}
+  become_user: '{{ username }}'
+  copy:
+    src:    'roles/user_standard_setup/files/vim/vimrc'
+    dest:   '~/.vimrc'
+    mode:   '0644'
+
+- name: Copy vimrc.bundles file for {{ username }}
+  become_user: '{{ username }}'
+  copy:
+    src:    'roles/user_standard_setup/files/vim/vimrc.bundles'
+    dest:   '~/.vimrc.bundles'
+    mode:   '0644'
+
+- name: Clone vundle to manage vim plugins for {{ username }}
+  become_user: '{{ username }}'
+  git:
+    repo: 'https://github.com/gmarik/vundle.git'
+    dest: '~/.vim/bundle/vundle'
+
+- name: Install vim plugins for {{ username }}
+  become_user: '{{ username }}'
+  command: 'vim -u ~/.vimrc.bundles +BundleInstall +qa'

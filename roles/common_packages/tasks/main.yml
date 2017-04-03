@@ -1,0 +1,4 @@
+---
+- name: Install basic packages
+  include: basic_packages.yml
+  tags: basic_packages

@@ -1,0 +1,13 @@
+# get the name of the ruby version
+rvm_prompt_info() {
+  [ -f /usr/local/rvm/bin/rvm-prompt ] || [ -f $HOME/.rvm/bin/rvm-prompt ] || return
+  local rvm_prompt
+  if [ -f $HOME/.rvm/bin/rvm-prompt ] ; then
+    rvm_prompt=$($HOME/.rvm/bin/rvm-prompt ${ZSH_THEME_RVM_PROMPT_OPTIONS} 2>/dev/null)
+  fi
+  if [ -f /usr/local/rvm/bin/rvm-prompt ] ; then
+    rvm_prompt=$(/usr/local/rvm/bin/rvm-prompt ${ZSH_THEME_RVM_PROMPT_OPTIONS} 2>/dev/null)
+  fi
+  [[ "${rvm_prompt}x" == "x" ]] && return
+  echo "[%{$fg_bold[red]%}${rvm_prompt}%{$reset_color%}]" | sed "s/ruby-//"
+}

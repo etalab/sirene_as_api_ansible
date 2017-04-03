@@ -1,0 +1,12 @@
+---
+- name: Create user deploy
+  user:
+    name: deploy
+    groups: 'sudo'
+    state: present
+
+- name: Set authorized key for deploy
+  authorized_key:
+    user: deploy
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
