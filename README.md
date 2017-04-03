@@ -63,6 +63,7 @@ différents hôtes à des endroits différents nommés inventaires. Vous pouvez
 [jeter un oeil ici](http://docs.ansible.com/ansible/intro_inventory.html)
 
 Le plus simple est encore d'exécuter
+
     echo 'MON_IP_OU_DOMAINE' >> inventories/sirene_as_api
 
 Nous allons maintenant lancer la commande Ansible en lui indiquant quel
