@@ -2,3 +2,7 @@
 - name: Install basic packages
   include: basic_packages.yml
   tags: basic_packages
+
+- name: Install web app packages
+  include: web_app_packages.yml
+  tags: web_app_packages

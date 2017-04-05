@@ -1,6 +1,0 @@
----
-- name: Create deploy user
-  include: create_deploy_user.yml
-
-- name: Enable passwordless sudo
-  include: enable_passwordless_sudo.yml

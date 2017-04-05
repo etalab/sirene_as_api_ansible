@@ -1,0 +1,14 @@
+# Sorry about this, doing it in 1 step was writing on stderr and thus
+# rollbacked
+---
+- name: Add github to known hosts 1_of_2
+  command: 'ssh-keyscan -t rsa github.com'
+  register: keyscan
+  tags: github
+
+- name: Add github to known hosts 2_of_2
+  lineinfile:
+    dest: /home/deploy/.ssh/known_hosts
+    line: "{{ keyscan.stdout_lines[0] }}"
+    state: present
+  tags: github

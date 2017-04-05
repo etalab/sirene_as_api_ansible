@@ -3,7 +3,7 @@
   sudo: true
 
   roles:
-    - { role: create_deploy_user }
+    - { role: common_deploy_user }
     - { role: common_packages }
     - { role: geerlingguy.ruby, ruby_install_from_source: true, ruby_download_url: 'http://ftp.ruby-lang.org/pub/ruby/ruby-2.4.1.tar.gz', ruby_version: '2.4.1' }
     - { role: nginx_passenger, mina_deploy: true }
@@ -15,48 +15,3 @@
         name: user_standard_setup
       with_items:
         - deploy
-
-    - name: Install postgres
-      apt: name=postgresql state=present
-
-    - name: Install postgres dev lib for builing pg gem
-      apt: name=libpq-dev state=present
-
-    #- name: Create /var/www
-    #  file: path='/var/www' group=deploy owner=deploy mode=0755 state=directory
-
-    # WILL BECOME ROLE EMBER.JS
-    - name: Install npm
-      apt: name=npm state=present
-      tags: js-env
-
-    - name: Install bower and ember-cli package globally.
-      npm: name={{ item }} global=yes
-      with_items:
-        - bower
-        - ember-cli
-      tags: js-env
-
-    - name: Create git directory 1_of_2
-      file:
-        path: /opt
-        state: directory
-        mode: 0755
-      tags: git
-
-    - name: Create git directory 2_of_2
-      file:
-        path: '/opt/git'
-        state: directory
-        owner: deploy
-        group: deploy
-        mode: 0755
-      tags: git
-
-    - name: Clone git repositories
-      become_user: deploy
-      git:
-        repo: 'https://github.com/sgmap/sirene_as_api'
-        dest: '/opt/git/sirene_as_api'
-        accept_hostkey: true
-      tags: github
