@@ -46,3 +46,25 @@
 - name: Substitute a random generated secret into secrets.yml
   command: bash -c 'read random_string < <(cat /dev/urandom | env LC_CTYPE=C LC_ALL=C tr -dc a-zA-Z0-9 | head -c 16; echo) ; sed -i -e "s/MY_SECRET_KEY_BASE/$random_string/" /var/www/sirene_as_api/shared/config/secrets.yml'
   tags: mina
+
+- name: Create sirene_as_api postgresql_user
+  postgresql_user:
+    name: sirene_as_api
+    password: password
+    role_attr_flags: CREATEDB,LOGIN
+  become_user: postgres
+  tags: dbsetup
+
+- name: Create sirene_as_api production database
+  postgresql_db:
+    name: sirene_as_api_production
+    owner: sirene_as_api
+  become_user: postgres
+  tags: dbsetup
+
+- name: Install pg_trgm extension sirene_as_api_production
+  postgresql_ext:
+    name: pg_trgm
+    db: sirene_as_api_production
+  become_user: postgres
+  tags: dbsetup

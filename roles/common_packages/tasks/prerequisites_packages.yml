@@ -1,0 +1,2 @@
+- name: install prerequisites
+  apt: name=python-psycopg2
