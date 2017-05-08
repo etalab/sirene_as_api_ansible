@@ -1,0 +1,48 @@
+- name: Create directory /var/www/sirene_as_api
+  file:
+    path: /var/www/sirene_as_api
+    state: directory
+    owner: deploy
+    group: deploy
+    mode: 0755
+
+- name: sirene_as_api mina structure
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: deploy
+    group: deploy
+    mode: 0755
+  with_items:
+    - /var/www/sirene_as_api/shared/config
+    - /var/www/sirene_as_api/shared/config/environments
+  tags: mina
+
+- name: sirene_as_api config file database.yml
+  copy:
+    src:  database.yml.j2
+    dest: /var/www/sirene_as_api/shared/config/database.yml
+    owner: deploy
+    group: deploy
+  tags: mina
+
+- name: sirene_as_api config file production.rb
+  copy:
+    src:  production.rb.j2
+    dest: /var/www/sirene_as_api/shared/config/environments/production.rb
+    owner: deploy
+    group: deploy
+  tags: mina
+
+- name: sirene_as_api config file secrets.yml
+  copy:
+    src:  secrets.yml.j2
+    dest: /var/www/sirene_as_api/shared/config/secrets.yml
+    owner: deploy
+    group: deploy
+    force: no
+  tags: mina
+
+- name: Substitute a random generated secret into secrets.yml
+  command: bash -c 'read random_string < <(cat /dev/urandom | env LC_CTYPE=C LC_ALL=C tr -dc a-zA-Z0-9 | head -c 16; echo) ; sed -i -e "s/MY_SECRET_KEY_BASE/$random_string/" /var/www/sirene_as_api/shared/config/secrets.yml'
+  tags: mina

@@ -1,6 +1,44 @@
 - hosts: all
-  remote_user: deploy
+  remote_user: root
   sudo: true
+
+  pre_tasks:
+    - name: Get largest_data_volume
+      command: bash -c 'df | sed -e "s/^[^ ]*//" | sed 1d | sort | head -n1 | sed -e "s/[%0-9 ]*//"'
+      register: largest_data_volume
+
+    - debug:
+        msg: '{{ largest_data_volume.stdout }}/symlinks'
+
+    - name: Create symlinks dir in largest_data_volume
+      file:
+        path: '{{ largest_data_volume.stdout }}/symlinks'
+        state: directory
+        mode: 0755
+
+    - name: Create postgresql dir to symlink to
+      file:
+        path: '{{ largest_data_volume.stdout }}/symlinks/var/lib/postgresql'
+        state: directory
+        mode: 0755
+
+    - name: Establish symbolic link for postgresql dir
+      file:
+        src: '{{ largest_data_volume.stdout }}/symlinks/var/lib/postgresql'
+        dest: '/var/lib/postgresql'
+        state: link
+
+    - name: Create /var/www dir to symlink to
+      file:
+        path: '{{ largest_data_volume.stdout }}/symlinks/var/www'
+        state: directory
+        mode: 0755
+
+    - name: Establish symbolic link for /var/www
+      file:
+        src: '{{ largest_data_volume.stdout }}/symlinks/var/www'
+        dest: '/var/www'
+        state: link
 
   roles:
     - { role: common_deploy_user }
@@ -15,3 +53,8 @@
         name: user_standard_setup
       with_items:
         - deploy
+
+    - name: sirene_as_api deploy directory structure
+      include_role:
+        name: sirene_as_api
+

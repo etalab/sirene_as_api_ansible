@@ -15,14 +15,12 @@
   apt_repository:
     repo:  'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
     state: present
-  register: add_phusion_repo_to_apt
 
 - name: Install nginx (passenger flavored) / passenger
   apt: name={{ item }} state=present update_cache=yes
   with_items:
     - nginx-extras
     - passenger
-  when: add_phusion_repo_to_apt.changed
 
 - name: Remove useless lines from nginx conf
   lineinfile: dest='/etc/nginx/nginx.conf' regexp='\s*##$' state=absent

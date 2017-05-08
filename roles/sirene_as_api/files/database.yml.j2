@@ -1,0 +1,11 @@
+defaults: &defaults
+  adapter: postgresql
+  encoding: unicode
+  host: localhost
+  pool: 15
+  username: sirene_as_api
+  password: password
+
+production:
+  database: sirene_as_api_production
+  <<: *defaults
