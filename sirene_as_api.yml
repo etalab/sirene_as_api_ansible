@@ -28,11 +28,21 @@
         dest: '/var/lib/postgresql'
         state: link
 
-    - name: Create /var/www dir to symlink to
+    - name: Create /var/www dir in largest_data_volume to symlink to
       file:
         path: '{{ largest_data_volume.stdout }}/symlinks/var/www'
         state: directory
         mode: 0755
+
+    - name: Copy pre-existing /var/www directory to largest_data_volume
+      command: "cp -r '/var/www' '{{ largest_data_volume.stdout }}/symlinks/var/'"
+      args:
+        removes: '/var/www' # This prevents copy if folder doesn't exist
+
+    - name: Delete existing /var/www directory that was saved in largest_data_volume
+      file:
+        path: '/var/www'
+        state: absent
 
     - name: Establish symbolic link for /var/www
       file:
@@ -58,3 +68,10 @@
       include_role:
         name: sirene_as_api
 
+    - name: Install default Java Runtime Environment for Solr
+      apt:
+        name: default-jdk
+        state: present
+
+# TODO: Fix with multiple ansible run, ruby-passenger and disable-symlink lines are duplicated
+# TODO: sudo apt-get install default-jre
