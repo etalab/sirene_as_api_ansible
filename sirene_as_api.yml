@@ -70,8 +70,7 @@
 
     - name: Install default Java Runtime Environment for Solr
       apt:
-        name: default-jdk
+        name: default-jre
         state: present
 
 # TODO: Fix with multiple ansible run, ruby-passenger and disable-symlink lines are duplicated
-# TODO: sudo apt-get install default-jre
