@@ -1,0 +1,14 @@
+---
+- name: Install PostgreSQL 9.6
+  include: install.yml
+  tags: [postgresql, postgresql_install]
+
+- name: Install PostgreSQL dev lib, used for gem compilation
+  apt:
+    name:  libpq-dev
+    state: present
+  tags: [postgresql, postgresql_install]
+
+- name: Applications setup
+  include: application_setup.yml
+  tags: [postgresql, postgresql_app_setup]

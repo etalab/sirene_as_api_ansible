@@ -1,3 +1,10 @@
 ---
 - name: Install git
   apt: name=git state=present
+
+- name: Copy gitignore file for {{ username }}
+  become_user: '{{ username }}'
+  template:
+    src:    './templates/gitconfig.j2'
+    dest:   '~/.gitconfig'
+    mode:   '0644'

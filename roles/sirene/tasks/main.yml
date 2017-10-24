@@ -1,0 +1,82 @@
+# This task is duplicate with the role ruby, but the headers of this version
+# are necessary for the gem nio4r
+- name: Install ruby-dev lib for gem compilation
+  apt:
+    name: ruby-dev
+    state: present
+
+- name: Template environment files
+  template:
+    src:   environments/{{ rails_env }}.rb.j2
+    dest:  /var/www/{{ app_name }}/shared/config/environments/{{ rails_env }}.rb
+    owner: deploy
+    group: deploy
+  notify:
+    - restart passenger
+  tags: update-app-environment-conf
+
+- name: Template secrets.yml
+  template:
+    src:   secrets.yml.j2
+    dest:  /var/www/{{ app_name }}/shared/config/secrets.yml
+    owner: deploy
+    group: deploy
+  notify:
+    - restart passenger
+    - restart nginx
+  tags: update-app-secrets
+
+- name: Template database.yml file
+  template:
+    src:   database.yml.j2
+    dest:  /var/www/{{ app_name }}/shared/config/database.yml
+    owner: deploy
+    group: deploy
+  notify:
+    - restart passenger
+  tags:
+    - update-app-secrets
+    - update-app-environment-conf
+
+- name: Template nginx conf file
+  template:
+    src:   nginx/{{ app_name }}.conf.j2
+    dest:  '{{ nginx_path }}/sites-available/{{ app_name }}.conf'
+    owner: deploy
+    group: deploy
+  tags: nginx-config
+  notify:
+    - restart passenger
+    - reload nginx
+
+- name: Create symlink for config file
+  file:
+    src:   '{{ nginx_path }}/sites-available/{{ app_name}}.conf'
+    dest:  '{{ nginx_path }}/sites-enabled/{{ app_name }}.conf'
+    state: link
+  notify:
+    - restart passenger
+
+- name: Install default Java Runtime Environment for Solr
+  apt:
+    name: default-jdk
+    state: present
+  notify:
+    - restart passenger
+
+- name: create specific directories for sirene app
+  file:
+    path: /var/www/{{ app_name }}/{{ item }}
+    state: directory
+    owner: deploy
+    group: deploy
+  with_items:
+    - 'shared/.last_monthly_stock_applied'
+    - 'shared/solr'
+  tags: sirene
+
+- name: Sunspot/Solr service
+  include: solr.yml
+  tags:
+    - sirene
+    - solr

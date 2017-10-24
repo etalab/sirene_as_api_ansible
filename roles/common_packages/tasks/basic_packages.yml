@@ -12,6 +12,8 @@
     - build-essential
     - imagemagick
     - libmagickwand-dev
+    - locales
+    - curl
 
 - name: Install nodejs as js runtime
   apt: name=nodejs state=present
@@ -21,3 +23,8 @@
   command: 'ln -s /usr/bin/nodejs /usr/bin/node'
   args:
     creates: '/usr/bin/node'
+
+- name: Install fr_FR locale
+  locale_gen:
+    name: 'fr_FR.UTF-8'
+    state: present

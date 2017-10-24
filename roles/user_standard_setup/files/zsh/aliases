@@ -1,0 +1,41 @@
+# Aliases for zsh coloration
+alias ls='ls --color=auto'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
+
+# Unix
+alias tlf="tail -f"
+alias mkdir='mkdir -p'
+alias l='ls -la'
+alias ll='ls -l'
+alias lh='ls -Alh'
+alias v="vim"
+alias tree="tree -LAC 3"
+
+# Super user
+alias pls='sudo'
+
+# Bundler
+alias b="bundle"
+
+# Rubygems
+alias gi="gem install"
+alias giv="gem install -v"
+
+# Rails
+alias m="migrate"
+alias rk="rake"
+alias rs="b exec ./bin/rspec"
+alias test-reset="RAILS_ENV=test rails db:environment:set db:setup"
+alias sr="bundle exec spring rspec"
+
+# Shame
+alias shame="ag -i '(TODO|FIXME|XXX)'"
+alias SHAME="ag -i '((TODO|FIXME|XXX) ){3}'"
+
+# git
+alias gdiff="git difftool -y -x 'colordiff -y -W $COLUMNS'"
+
+flip() { echo "（╯°□°）╯ ┻━┻"; }
+

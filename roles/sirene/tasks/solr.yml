@@ -1,0 +1,12 @@
+---
+- name: Template solr service
+  template:
+    src: solr.service.j2
+    dest: '/etc/systemd/system/solr_{{ app_name }}.service'
+    mode: 0644
+
+- name: enable solr service at startup
+  systemd:
+    name: solr_{{ app_name }}.service
+    enabled: yes
+    daemon_reload: yes

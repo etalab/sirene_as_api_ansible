@@ -1,0 +1,51 @@
+---
+- name: Install pgp key for phusion passenger
+  apt_key:
+    keyserver: 'hkp://keyserver.ubuntu.com:80'
+    id: '561F9B9CAC40B2F7'
+    state: present
+
+- name: Add phusion passenger apt repository
+  apt_repository:
+    repo:  'deb https://oss-binaries.phusionpassenger.com/apt/passenger {{ ansible_distribution_release }} main'
+    state: present
+
+- name: Install nginx (passenger flavored) / passenger
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+    - nginx-extras
+    - passenger
+
+- name: Enable autorestart nginx
+  service: name=nginx enabled=true
+
+- name: Remove useless lines from nginx conf
+  lineinfile: dest='/etc/nginx/nginx.conf' regexp='\s*##$' state=absent
+
+- name: Ensure nginx conf has passenger conf
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    line: "{{ item }}"
+    insertafter: '\s*# Uncomment it if you installed passenger or passenger-enterprise'
+    state: present
+  with_items:
+    - '  passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;'
+    - '  passenger_ruby /usr/bin/passenger_free_ruby;'
+  notify: restart nginx
+  register: passenger_conf_into_nginx_conf_file
+
+- name: Remove commented nginx conf lines for passenger
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    regexp: '\s*#\spassenger_*'
+    state: absent
+  notify: restart nginx
+
+- name: Ensure symlink are followed if mina is enabled
+  lineinfile:
+    dest: /etc/nginx/nginx.conf
+    line: '  disable_symlinks off;'
+    state: present
+    insertafter: 'http {'
+  notify: restart nginx
+  when: mina_deploy

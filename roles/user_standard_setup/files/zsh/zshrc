@@ -83,9 +83,3 @@ export PATH="$HOME/bin:$HOME/.bin:./bin:$PATH"
 if [ -e "$HOME/.zshrc.local" ]; then
   source "$HOME/.zshrc.local"
 fi
-
-# rvm
-# [[ -s "/usr/local/rvm/scripts/rvm" ]] && source "/usr/local/rvm/scripts/rvm"
-# [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
-
-# export PATH="$PATH:$HOME/.rvm/bin" # Add RVM to PATH for scripting

@@ -1,0 +1,41 @@
+---
+- name: Install UFW
+  apt:
+    name: ufw
+    state: latest
+
+- name: Support IPv6
+  lineinfile:
+    path: /etc/default/ufw
+    line: "IPV6=yes"
+    state: present
+
+- name: Temporary disable
+  ufw:
+    state: disabled
+
+- name: Enable logging
+  ufw:
+    logging: on
+
+- name: Configure ufw defaults
+  ufw:
+    direction: "{{ item.direction }}"
+    policy: "{{ item.policy }}"
+  with_items:
+    - { direction: 'incoming', policy: 'deny' }
+    - { direction: 'outgoing', policy: 'allow' }
+
+- name: Configure basic ufw rules
+  ufw:
+    rule:  allow
+    port:  "{{ item.port }}"
+    proto: "{{ item.proto }}"
+  with_items:
+    - { port: '22', proto: 'tcp' }
+    - { port: '80', proto: 'tcp' }
+    - { port: '443', proto: 'tcp' }
+
+- name: Enable UFW
+  ufw:
+    state: enabled
