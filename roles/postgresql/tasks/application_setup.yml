@@ -1,0 +1,19 @@
+---
+- name: Restart pg service for locales
+  service:
+    name: postgresql
+    state: restarted
+
+- name: Add app Template
+  postgresql_db:
+    name: '{{ db_name }}'
+    template: 'template0'
+  become_user: postgres
+
+- name: Add app database user
+  postgresql_user:
+    db: '{{ db_name }}'
+    name: '{{ db_name }}'
+    password: '{{ client_secret_db_password }}'
+    role_attr_flags: 'SUPERUSER,LOGIN,CREATEDB'
+  become_user: postgres

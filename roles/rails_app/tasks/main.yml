@@ -1,0 +1,55 @@
+---
+- name: create /var/www
+  file:
+    path: /var/www
+    state: directory
+    owner: deploy
+    group: deploy
+  tags: rails_app
+
+# cf below comment
+- name: create main directory
+  file:
+    path: /var/www/{{ app_name }}
+    state: directory
+    owner: deploy
+    group: deploy
+  tags: rails_app
+
+# this task do not set the privileges to the intermediary directory
+- name: create directories for apps
+  file:
+    path: /var/www/{{ app_name }}/{{ item }}
+    state:  directory
+    owner:  deploy
+    group:  deploy
+  with_items:
+    - 'releases'
+    - 'shared/config/environments'
+    - 'shared/public/system'
+    - 'shared/public/uploads'
+    - 'shared/uploads'
+    - 'shared/bin'
+    - 'shared/pids'
+    - 'shared/tmp/sockets'
+    - 'shared/tmp/pids'
+    - 'shared/tmp/cache'
+    - 'shared/config/initializers'
+    - 'shared/log'
+    - 'tmp'
+  tags: rails_app
+
+- name: Create symlink for logs
+  file:
+    dest: /var/log/{{ app_name }}
+    src: /var/www/{{ app_name }}/shared/log
+    state: link
+  tags: rails_app
+
+- name: Install bundler
+  command: "gem install bundler"
+  tags: bundler
+
+- name: Update bundler
+  command: "gem update bundler"
+  tags: bundler

@@ -1,0 +1,12 @@
+Description=Sunspot solr server for Sirene api {{ rails_env }}
+
+[Service]
+Type=forking
+PIDFile=/var/www/sirene_{{ rails_env }}/shared/solr/pids/{{ rails_env }}/sunspot-solr-{{ rails_env}}.pid
+User=deploy
+WorkingDirectory=/var/www/sirene_{{ rails_env}}/current
+ExecStart=/usr/local/rbenv/shims/bundle exec rake sunspot:solr:start RAILS_ENV={{ rails_env }}
+ExecStop= /usr/local/rbenv/shims/bundle exec rake sunspot:solr:stop  RAILS_ENV={{ rails_env }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,85 @@
+user www-data;
+worker_processes {{ ansible_processor_vcpus }};
+worker_rlimit_nofile 10240;
+timer_resolution 100ms;
+pid /run/nginx.pid;
+
+events {
+  use epoll;
+  worker_connections 10240;
+}
+
+http {
+  disable_symlinks off;
+
+  ##
+  # Basic Settings
+  ##
+
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 65;
+  types_hash_max_size 2048;
+  server_tokens off;
+
+  server_names_hash_bucket_size 64;
+  server_name_in_redirect off;
+
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  client_max_body_size 21m;
+
+  ##
+  # Logging Settings
+  ##
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+
+  ##
+  # Gzip Settings
+  ##
+
+  gzip on;
+  gzip_disable "msie6";
+
+  # gzip_vary on;
+  # gzip_proxied any;
+  gzip_comp_level 6;
+  gzip_buffers 16 8k;
+  # gzip_http_version 1.1;
+  gzip_types text/plain text/css application/json application/x-javascript application/javascript image/svg+xml text/xml application/xml application/xml+rss text/javascript;
+
+  ##
+  # nginx-naxsi config
+  ##
+  # Uncomment it if you installed nginx-naxsi
+  ##
+
+  #include /etc/nginx/naxsi_core.rules;
+
+  ##
+  # nginx-passenger config
+  ##
+  passenger_ruby /usr/bin/passenger_free_ruby;
+  passenger_root /usr/lib/ruby/vendor_ruby/phusion_passenger/locations.ini;
+
+  ##
+  # Virtual Host Configs
+  ##
+
+  include /etc/nginx/conf.d/*.conf;
+  include /etc/nginx/sites-enabled/*;
+
+  # Perf tuning
+  # http://vstark.net/2012/10/21/nginx-unicorn-performance-tweaks/
+  client_body_timeout   10;
+  client_header_timeout 10;
+  client_header_buffer_size 128;
+  open_file_cache           max=1000 inactive=20s;
+  open_file_cache_valid     30s;
+  open_file_cache_min_uses  2;
+  open_file_cache_errors    on;
+}

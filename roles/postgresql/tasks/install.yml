@@ -1,0 +1,21 @@
+---
+- name: Add official package repository for PostgreSQL 9.6
+  apt_repository:
+    repo: deb http://apt.postgresql.org/pub/repos/apt/ xenial-pgdg main
+    state: present
+
+- name: Add Postgres key for apt
+  apt_key:
+    url: "https://www.postgresql.org/media/keys/ACCC4CF8.asc"
+    state: present
+
+- name: Install PostgreSQL and its dependencies
+  apt:
+    name: '{{ item }}'
+    state: present
+    update_cache: true
+  with_items:
+    - libpq-dev
+    - python-psycopg2
+    - postgresql-9.6
+    - postgresql-contrib-9.6

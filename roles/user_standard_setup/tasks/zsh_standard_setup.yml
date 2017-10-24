@@ -8,6 +8,7 @@
     src:    'roles/user_standard_setup/files/zsh/zshrc'
     dest:   '~/.zshrc'
     mode:   '0644'
+  register: zshrc_copy
 
 - name: Copy zlogin file for {{ username }}
   become_user: '{{ username }}'
@@ -28,3 +29,18 @@
   user:
     name: '{{ username }}'
     shell: '/usr/bin/zsh'
+
+- name: Copy aliases configuration file for {{ username }}
+  become_user: '{{ username }}'
+  copy:
+    src:  'roles/user_standard_setup/files/zsh/aliases'
+    dest: '~/.aliases'
+    mode: '0644'
+  register: aliases_copy
+
+- name: Reload zsh configuration
+  shell: source ~/.zshrc
+  become_user: '{{ username }}'
+  args:
+    executable: /bin/bash
+  #when: zshrc_copy|changed or aliases_copy|changed

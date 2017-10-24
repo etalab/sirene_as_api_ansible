@@ -46,8 +46,8 @@ nnoremap ` '
 inoremap jj <ESC>
 
 " Switch ; and :
-nnoremap ; :
-nnoremap : ;
+" nnoremap ; :
+" nnoremap : ;
 
 "" fold
 set foldmethod=indent   "fold based on indent
