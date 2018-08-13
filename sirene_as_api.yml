@@ -2,10 +2,6 @@
 - hosts: all
   remote_user: root
   become: true
-  #
-  # tasks:
-  #   - name: install python 2
-  #     raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
 
   vars:
     - app_name: sirene_production
@@ -19,9 +15,6 @@
 
   roles:
     - { role: python_install_raw, tags: ['python_raw'] }
-    - { role: common_packages, tags: ['common_packages'] }
-    - { role: deploy_user, tags: ['deploy_user'] }
-    - { role: user_standard_setup, usernames: ['deploy', 'root'], tags: ['user_standard_setup'] }
     - { role: nginx, mina_deploy: true, tags: ['nginx'] }
     - { role: rails_app, tags: sirene_rails_app }
     - { role: ruby, tags: ['ruby', 'rbenv'] }

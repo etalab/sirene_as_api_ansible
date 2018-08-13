@@ -1,5 +1,0 @@
----
-- name: Install standard setup for users
-  include: user_standard_setup.yml
-  tags: user_standard_setup
-  with_items: "{{ usernames }}"

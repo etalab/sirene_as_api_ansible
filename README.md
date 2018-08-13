@@ -13,7 +13,7 @@ compatibilité pour d'autres distributions.
 
 ## Installation Ansible
 
-Il vous faut la version 2.3 d'Ansible pour pouvoir exécuter le playbook
+Il vous faut la version 2.3 ou supérieure d'Ansible pour pouvoir exécuter le playbook
 sirene_as_api.yml. Ansible s'installe sur votre machine de développement et ne
 nécessite pas d'installation sur votre serveur distant.
 
@@ -33,7 +33,6 @@ La documentation officielle est votre amie. Vous y trouverez les
 #### Windows
 
 Rebootez sous linux ou mac os et reportez vous aux sections précédentes =)
-
 
 ## Installation de la machine distante via Ansible
 
@@ -80,14 +79,10 @@ sirene_as_api.yml.
 Bien évidemment, il est très déconseillé de rendre ces informations publiques.
 Ne réutilisez pas un mot de passe qui peut vous compromettre par ailleurs.
 
-### Paquets cosmétiques
+### User deploy
 
-Si l'on regarde en détail, notre script installe des paquets cosmétiques, de la
-configuration vim, zsh etc. Vous pouvez tout aussi bien vous en passer en
-commentant les appels à ces tâches dans les fichiers.
-Vous pouvez par exemple commenter les roles common_packages et user_standard_setup
-dans le fichier sirene_as_api.yml.
-Les commentaires se font grâce au '#'.
+Suivant les bonnes pratiques, notre script ansible n'installe pas sur le server distant en root
+mais crée un utilisateur "deploy" et lui donne les accès pour installer l'application.
 
 ### Installation de Python 2
 

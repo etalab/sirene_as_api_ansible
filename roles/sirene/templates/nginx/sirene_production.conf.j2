@@ -2,7 +2,7 @@ server {
   listen 80;
   server_name {{ client_server_name }};
 
-  location ~ ^/(full_text|siret|siren)/ {
+  location ~ ^/v1\/(full_text|siret|siren|suggest|near_point|near_etablissement|near_etablissement_geojson)/ {
 # Tell Nginx and Passenger where your app's 'public' directory is
     root /var/www/{{ app_name }}/current/public;
 
