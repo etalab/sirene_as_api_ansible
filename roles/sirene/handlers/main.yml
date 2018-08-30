@@ -1,0 +1,9 @@
+---
+- name: restart passenger
+  command: passenger-config restart-app /var/www/{{ app_name }}/current/public
+  ignore_errors: yes
+
+- name: reload nginx
+  service:
+    name: nginx
+    state: reloaded

@@ -1,0 +1,4 @@
+---
+- name: Install passenger flavoured nginx
+  include: install_passenger_flavoured_nginx.yml
+  tags: nginx_passenger

@@ -1,8 +1,0 @@
-- name: Create /var/www
-  file:
-    path: /var/www
-    group: deploy
-    owner: deploy
-    mode: 0755
-    state: directory
-    follow: yes

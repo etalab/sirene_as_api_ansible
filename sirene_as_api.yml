@@ -1,76 +1,22 @@
+---
 - hosts: all
   remote_user: root
-  sudo: true
+  become: true
 
-  pre_tasks:
-    - name: Get largest_data_volume
-      command: bash -c 'df | sed -e "s/^[^ ]*//" | sed 1d | sort | head -n1 | sed -e "s/[%0-9 ]*//"'
-      register: largest_data_volume
-
-    - debug:
-        msg: '{{ largest_data_volume.stdout }}/symlinks'
-
-    - name: Create symlinks dir in largest_data_volume
-      file:
-        path: '{{ largest_data_volume.stdout }}/symlinks'
-        state: directory
-        mode: 0755
-
-    - name: Create postgresql dir to symlink to
-      file:
-        path: '{{ largest_data_volume.stdout }}/symlinks/var/lib/postgresql'
-        state: directory
-        mode: 0755
-
-    - name: Establish symbolic link for postgresql dir
-      file:
-        src: '{{ largest_data_volume.stdout }}/symlinks/var/lib/postgresql'
-        dest: '/var/lib/postgresql'
-        state: link
-
-    - name: Create /var/www dir in largest_data_volume to symlink to
-      file:
-        path: '{{ largest_data_volume.stdout }}/symlinks/var/www'
-        state: directory
-        mode: 0755
-
-    - name: Copy pre-existing /var/www directory to largest_data_volume
-      command: "cp -r '/var/www' '{{ largest_data_volume.stdout }}/symlinks/var/'"
-      args:
-        removes: '/var/www' # This prevents copy if folder doesn't exist
-
-    - name: Delete existing /var/www directory that was saved in largest_data_volume
-      file:
-        path: '/var/www'
-        state: absent
-
-    - name: Establish symbolic link for /var/www
-      file:
-        src: '{{ largest_data_volume.stdout }}/symlinks/var/www'
-        dest: '/var/www'
-        state: link
+  vars:
+    - app_name: sirene_production
+    - db_name: sirene_as_api
+    - db_adapter: postgresql
+    - rails_env: production
+    - environment_config_log_level: :debug
+    - client_server_name: #MY_SERVER.com
+    - client_secret_key_base: #MY_SECRET_KEY_BASE
+    - client_secret_db_password: #MY_SECRET_DB_PASSWORD
 
   roles:
-    - { role: common_deploy_user }
-    - { role: common_packages }
-    - { role: geerlingguy.ruby, ruby_install_from_source: true, ruby_download_url: 'http://ftp.ruby-lang.org/pub/ruby/ruby-2.4.1.tar.gz', ruby_version: '2.4.1' }
-    - { role: nginx_passenger, mina_deploy: true }
-    - { role: geerlingguy.redis }
-
-  tasks:
-    - name: Deploy user standard setup
-      include_role:
-        name: user_standard_setup
-      with_items:
-        - deploy
-
-    - name: sirene_as_api deploy directory structure
-      include_role:
-        name: sirene_as_api
-
-    - name: Install default Java Runtime Environment for Solr
-      apt:
-        name: default-jre
-        state: present
-
-# TODO: Fix with multiple ansible run, ruby-passenger and disable-symlink lines are duplicated
+    - { role: python_install_raw, tags: ['python_raw'] }
+    - { role: nginx, mina_deploy: true, tags: ['nginx'] }
+    - { role: rails_app, tags: sirene_rails_app }
+    - { role: ruby, tags: ['ruby', 'rbenv'] }
+    - { role: sirene, tags: sirene }
+    - { role: postgresql, tags: postgresql }

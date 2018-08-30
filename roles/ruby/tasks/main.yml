@@ -1,0 +1,35 @@
+- name: Install Rbenv
+  include_role:
+    name : zzet.rbenv
+  vars:
+    rbenv:
+      default_ruby: 2.4.2
+      version: v1.1.1
+      env: system
+      rbenv_owner: 'deploy'
+      rbenv_group: 'deploy'
+      rubies:
+        - version: 2.4.1
+        - version: 2.4.2
+  tags: ['rbenv']
+
+- name: Add brightbox repository to apt-get for ruby-2.4 dev
+  apt_repository:
+    repo: 'ppa:brightbox/ruby-ng'
+    state: present
+    update_cache: yes
+
+- name: Install ruby-2.4 dev lib for gem compilation
+  apt:
+    name: ruby2.4-dev
+    state: present
+  register: rubydev
+
+- name: Checks if apt installed ruby exists
+  shell: zsh -c '[[ `readlink -f /usr/bin/ruby` =~ "^\/usr\/bin\/ruby2\.[[:digit:]]" ]]'
+  register: apt_installed_ruby
+  ignore_errors: true
+
+- name: Nuke apt installed ruby if existing and replaces it by a symbolic link to rbenv install
+  shell: zsh -c 'rm /usr/bin/ruby && sudo ln -s /usr/local/rbenv/shims/ruby /usr/bin/ruby'
+  when: apt_installed_ruby.rc == 0

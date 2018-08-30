@@ -1,0 +1,35 @@
+---
+- name: Create deploy group
+  group:
+    name: deploy
+    state: present
+
+- name: Create deploy user
+  user:
+    name: deploy
+    groups: 'sudo'
+    state: present
+
+- name: passwordless sudo 1 of 2
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    line: '%sudo ALL=(ALL:ALL) NOPASSWD: ALL'
+
+- name: passwordless sudo 2 of 2
+  lineinfile:
+    dest: /etc/sudoers
+    state: absent
+    line: '%sudo ALL=(ALL:ALL) ALL'
+
+- name: Allow keeping forwarding agent env variable through user change
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    line: 'Defaults  env_keep+=SSH_AUTH_SOCK'
+    insertafter: '^Defaults\s*secure_path=.*'
+  notify:
+    - restart sshd
+
+- name: Create /var/www, with owner deploy
+  file: path='/var/www' group=deploy owner=deploy mode=0755 state=directory

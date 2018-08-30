@@ -1,0 +1,23 @@
+server {
+  listen 80;
+  server_name {{ client_server_name }};
+
+  location ~ ^/v1\/(full_text|siret|siren|suggest|near_point|near_etablissement|near_etablissement_geojson)/ {
+# Tell Nginx and Passenger where your app's 'public' directory is
+    root /var/www/{{ app_name }}/current/public;
+
+# Turn on Passenger
+    passenger_enabled on;
+    passenger_ruby /usr/local/rbenv/shims/ruby;
+    passenger_app_env {{ rails_env }};
+  }
+
+# Rewrite routes to index.html?...
+  location / {
+    try_files $uri $uri/ @rewrites;
+  }
+
+  location @rewrites {
+    rewrite ^(.+)$ /index.html last;
+  }
+}
