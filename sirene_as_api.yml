@@ -15,6 +15,7 @@
 
   roles:
     - { role: python_install_raw, tags: ['python_raw'] }
+    - { role: deploy_user, tags: ['deploy_user'] }
     - { role: nginx, mina_deploy: true, tags: ['nginx'] }
     - { role: rails_app, tags: sirene_rails_app }
     - { role: ruby, tags: ['ruby', 'rbenv'] }
