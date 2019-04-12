@@ -79,6 +79,12 @@ sirene_as_api.yml.
 Bien évidemment, il est très déconseillé de rendre ces informations publiques.
 Ne réutilisez pas un mot de passe qui peut vous compromettre par ailleurs.
 
+### Role nécessaire
+
+Avant de pouvoir utiliser Ansible, vous devez installer le role suivant : [rbenv](https://galaxy.ansible.com/zzet/rbenv).
+
+Pour ce faire, rien de plus simple puisqu'il vous suffit de taper la commande suivante : `ansible-galaxy install zzet.rbenv`
+
 ### User deploy
 
 Suivant les bonnes pratiques, notre script ansible n'installe pas sur le server distant en root
