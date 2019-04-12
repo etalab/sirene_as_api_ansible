@@ -47,7 +47,7 @@ Si d'aventure vous avez besoin d'un mot de passe pour vous connecter à root, il
 vous faudra utiliser l'option `--ask-sudo` dans vos appels à ansible-playbook.
 Ansible vous donnera la main pour taper votre mot de passe au bon moment
 
-En fonction de votre systeme d'exploitation / distrubution, ansible va piocher les
+En fonction de votre système d'exploitation ou distribution, ansible va piocher les
 différents hôtes à des endroits différents nommés inventaires. Vous pouvez
 [jeter un oeil ici](http://docs.ansible.com/ansible/intro_inventory.html)
 
